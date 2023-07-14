@@ -21,6 +21,7 @@ function worker(task, callback) {
   let output = '';
   let error = '';
   let processTimedOut = false;
+  let haveCalledBack = false;
 
   // Handle stdout data
   pythonProcess.stdout.on('data', (data) => {
@@ -34,13 +35,18 @@ function worker(task, callback) {
 
   // Handle any errors that occur during execution
   pythonProcess.on('error', (error) => {
-    callback({ success: false, message: 'Internal server error: ' + error });
+    if (!haveCalledBack) {
+      haveCalledBack = true;
+      callback({ success: false, message: 'Internal server error: ' + error });
+    }
   });
 
   // When the Python process finishes
   pythonProcess.on('close', (code) => {
     clearTimeout(timeoutId); // Clear the timeout if the process finishes before timeout
-
+    if (haveCalledBack) return;
+    
+    haveCalledBack = true;
     if (processTimedOut) {
       // If the process timed out, then return an error
       callback({ success: false, message: `Code execution timed out after ${MAX_TIMEOUT} ms` });

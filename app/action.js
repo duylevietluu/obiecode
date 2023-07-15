@@ -9,70 +9,38 @@ import { extractUserInfo } from "@utils/utilFunc";
 import { getServerSession } from "next-auth";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import bcrypt from 'bcrypt';
+import User from "@models/user";
 
-const extractTestInfoFrom = (formData) => {
-  const numTestCases = parseInt(formData.get('numTestCases'));
-  // validate numTestCases
-  if (isNaN(numTestCases) || numTestCases < 1 || numTestCases > 10) {
-    throw new Error('Invalid number of test cases');
-  }
-  const test = {
-    _id: formData.get('_id'),
-    title: formData.get('title'),
-    content: formData.get('content'),
-    testCases: [],
-  }
-  if (!test._id) delete test._id;
-  for (let i = 1; i <= numTestCases; i++) {
-    test.testCases.push({
-      input: formData.get(`input ${i}`),
-      output: formData.get(`output ${i}`),
-    })
-  }
-  return test;
-}
-
-export const addTestAction = async(formData) => {
-  let new_test_id = null;
+// createOrEditTest
+export const createOrEditTest = async(testId, title, content, testCases) => {
+  // if testId is not null then edit test
+  // else create test
   try {
     const user = extractUserInfo(await getServerSession());
     // if not authorized then return
     if (!user || !user.admin) {
-      throw new Error('unauthorized add test');
+      return({ error: "403 Unauthorized!" });
     }
-    const test = extractTestInfoFrom(formData);
+    // validate
+    if (!title || !content || !testCases || testCases.length === 0) {
+      return({ error: "title, content, testCases are required!" });
+    }
     await connectedToDB();
-    const newTest = new Test(test);
-    await newTest.save();
-    revalidatePath('/tests');
-    new_test_id = newTest._id;
-  } catch (error) {
-    console.log(error);
-  }
-  if (new_test_id) {
-    redirect(`/tests/${new_test_id}`);
-  }
-}
+    const data = { title, content, testCases };
+    if (testId) {
+      await Test.findByIdAndUpdate(testId, data, {new: true});
 
-export const editTestAction = async(formData) => {
-  let new_test_id = null;
-  try {
-    const user = extractUserInfo(await getServerSession());
-    // if not authorized then return
-    if (!user || !user.admin) {
-      throw new Error('unauthorized edit test');
+    } else {
+      const newTest = new Test(data);
+      await newTest.save();
+      testId = newTest._id;
     }
-    const test = extractTestInfoFrom(formData);
-    await connectedToDB();
-    const updatedTest = await Test.findByIdAndUpdate(test._id, test, {new: true});
     revalidatePath('/tests');
-    revalidatePath(`/tests/${test._id}`);
-    new_test_id = updatedTest._id;
+    revalidatePath(`/tests/${testId}`);
+    return({ data: testId });
   } catch (error) {
-    console.log(error);
-  }
-  if (new_test_id) {
-    redirect(`/tests/${new_test_id}`);
+    return({ error: error.message });
   }
 }
 
@@ -102,14 +70,14 @@ export const deleteTestAction = async(testId) => {
 // todo editUserAction
 // have to handle profilePic as well!
 
-export const addPostAction = async(formData) => {
-  const code = formData.get('code');
-  const testId = formData.get('testId');
-  const userId = formData.get('userId');
-
-  let new_post_id = null;
+export const addPostAction = async(testId, userId, code) => {
   try {
     await connectedToDB();
+
+    // validation
+    if (!code) {
+      return {error: "code is empty"};
+    }
 
     // grade it
     const test = await Test.findById(testId);
@@ -126,7 +94,6 @@ export const addPostAction = async(formData) => {
     });
 
     await newPost.save();
-    new_post_id = String(newPost._id);
 
     // bestgrade
     const bestGrade = await BestGrade.findOne({test: testId, user: userId});
@@ -141,10 +108,34 @@ export const addPostAction = async(formData) => {
       await BestGrade.findByIdAndUpdate(bestGrade._id, {result: newPost.grade});
       revalidatePath(`/tests/${testId}`);
     }
+
+    return {data: String(newPost._id)};
   } catch (error) {
-    console.log(error);
+    return {error: error.message};
   }
-  if (new_post_id) {
-    redirect(`/posts/${new_post_id}`);
+}
+
+// register a new user
+export const registerAction = async(username, name, password) => {
+  try {
+    await connectedToDB();
+    if (!password || password.length < 8) {
+      return {error: "Password must be available and at least 8 characters long"};
+    }
+    const saltRounds = 12;
+    const passwordHash = await bcrypt.hash(password, saltRounds);
+    const user = new User({
+      username,
+      name,
+      passwordHash,
+      admin: false,
+    });
+    await user.save();
+    return {data: String(user._id)};
+  } catch (error) {
+    if (error?.message && error.message.includes('duplicate key error')) {
+      return {error: "Username already taken"};
+    }
+    return {error: error.message};
   }
 }

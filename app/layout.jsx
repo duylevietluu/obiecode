@@ -15,11 +15,11 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <AuthProvider>
-        <body className={inter.className}>
+        <body className={inter.className + " min-h-screen"}>
           <header className='bg-[#ececf1] text-gray-800'>
             <NavBar />
           </header>
-          <main className={"min-h-screen flex-col justify-between px-24 py-10  text-gray-800 bg-transparent"}>
+          <main className={"flex-col justify-between px-24 py-10  text-gray-800 bg-transparent"}>
             {children}
           </main>
         </body>

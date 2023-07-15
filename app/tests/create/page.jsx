@@ -1,5 +1,4 @@
-import { addTestAction } from '@app/action';
-import TestForm from '@app/tests/TestForm';
+import TestForm from '@components/TestForm';
 import { extractUserInfo } from '@utils/utilFunc';
 import { getServerSession } from 'next-auth';
 
@@ -12,7 +11,7 @@ const CreateTest = async() => {
       </div>
     )
   }
-  return <TestForm action={addTestAction}  />
+  return <TestForm />
 }
 
 export default CreateTest;

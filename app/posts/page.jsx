@@ -1,4 +1,4 @@
-import { Grade } from "@app/tests/[id]/page";
+import Grade from "@components/Grade";
 import Post from "@models/post";
 import { connectedToDB } from "@utils/database";
 import Link from "next/link";

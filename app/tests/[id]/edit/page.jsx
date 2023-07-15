@@ -1,5 +1,4 @@
-import { editTestAction } from "@app/action";
-import TestForm from "@app/tests/TestForm";
+import TestForm from "@components/TestForm";
 import Test from "@models/test";
 
 const TestPageEdit = async({params}) => {
@@ -7,7 +6,7 @@ const TestPageEdit = async({params}) => {
   const test = JSON.parse(JSON.stringify(db_data));
 
   return (
-    <TestForm action={editTestAction} existingTest={test} />
+    <TestForm existingTest={test} />
   )
 }
 

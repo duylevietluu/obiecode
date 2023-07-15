@@ -2,11 +2,14 @@
 
 import ReactCodeMirror from "@uiw/react-codemirror";
 import { python, pythonLanguage } from '@codemirror/lang-python';
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { addPostAction } from "@app/action";
+import { useRouter } from "next/navigation";
 
 const CodeForm = ({testId, userId}) => {
   const [code, setCode] = useState('');
+  const [pending, startTransition] = useTransition();
+  const router = useRouter();
 
   if (!userId) return (
     <ReactCodeMirror 
@@ -20,16 +23,25 @@ const CodeForm = ({testId, userId}) => {
     />
   )
 
+  const handleAction = () => {
+    startTransition(async() => {
+      const {data, error} = await addPostAction(testId, userId, code);
+      if (error) {
+        alert(error);
+      }
+      if (data) {
+        router.push(`/posts/${data}`);
+      }
+    })
+  }
+
   return (
-    <form action={addPostAction}>
-      <input type="hidden" name="testId" value={testId} />
-      <input type="hidden" name="userId" value={userId} />
-      <input type="hidden" name="code" value={code} />
+    <form action={handleAction}>
       <ReactCodeMirror
         placeholder="Please enter Python code."
         height="70vh"
         value=""
-        onChange={(value) => { setCode(value) }} 
+        onChange={(value) => setCode(value)} 
         extensions={[python({ base: python, codeLanguages: pythonLanguage })]} 
         className="pb-2 text-lg"
       />
@@ -37,9 +49,9 @@ const CodeForm = ({testId, userId}) => {
         <button 
           type="submit" 
           className="blue-btn"
-          disabled={!code}
+          disabled={pending || !code} 
         >
-          Submit
+          {pending ? "Submitting..." : "Submit"}
         </button>
       </div>
       

@@ -6,6 +6,7 @@ import Link from "next/link";
 import CodeView from "@components/CodeView";
 import { getServerSession } from "next-auth";
 import { extractUserInfo } from "@utils/utilFunc";
+import Grade from "@components/Grade";
 
 const PostViewPage = async({params}) => {
   await connectedToDB();
@@ -27,7 +28,7 @@ const PostViewPage = async({params}) => {
       <div className="flex flex-col md:flex-row">
         {/* COL 1: USER INFO */}
         <div className="md:w-5/12">
-          <div className="font-bold">Grade: {post.grade}</div>
+          <div className="font-bold">Grade: <Grade grade={post.grade} /></div>
           <div><span className="font-bold">Time submitted: </span>{post.date}</div>
           <div className="mt-5">
             {

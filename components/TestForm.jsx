@@ -1,15 +1,20 @@
 'use client';
+import { createOrEditTest } from '@app/action';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useTransition } from 'react';
 
-const TestForm = ({action,existingTest}) => {
+// it is used in both create and edit page
+const TestForm = ({existingTest}) => {
   const router = useRouter();
+  const [pending, startTransition] = useTransition();
+
   existingTest = existingTest || {
     _id: '',
     title: '',
     content: '',
     testCases: [{input:'',output:''}],
   };
+
   const array = existingTest.testCases.map((_, i) => i);
   const [cases, setCases] = useState(array);
 
@@ -18,15 +23,35 @@ const TestForm = ({action,existingTest}) => {
     setCases([...cases, cases[cases.length - 1] + 1]);
   }
 
-  const handleDelete = (key) => {
+  const handleDeleteTest = (key) => {
     if (cases.length === 1) return;
     setCases(cases.filter((item) => item !== key));
   }
 
+  const handleAction = (formData) => {
+    // take the data from the form and send it to the server
+    const title = formData.get('title');
+    const content = formData.get('content');
+    const testCases = [];
+    for (let i = 1; i <= cases.length; i++) {
+      testCases.push({
+        input: formData.get(`input ${i}`),
+        output: formData.get(`output ${i}`),
+      });
+    }
+    startTransition(async() => {
+      const { data, error } = await createOrEditTest(existingTest._id, title, content, testCases);
+      if (error) {
+        alert(error);
+      }
+      else {
+        router.push(`/tests/${data}`);
+      }
+    })
+  }
+
   return (
-    <form action={action} className='max-w-screen-lg mx-auto'>
-      {/* this is to get into Formdata */}
-      <input hidden type="text" name='_id' value={existingTest._id} readOnly />
+    <form action={handleAction} className='max-w-screen-lg mx-auto'>
       <table className='w-full'>
         <tbody>
           <tr>
@@ -43,14 +68,6 @@ const TestForm = ({action,existingTest}) => {
             </td>
             <td>
               <textarea className='content_textarea' name="content" required defaultValue={existingTest.content} />
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <label className='form_label'>Number of Test Cases</label>
-            </td>
-            <td>
-              <input className='form_input' name="numTestCases" value={cases.length} readOnly />
             </td>
           </tr>
         </tbody>
@@ -83,7 +100,7 @@ const TestForm = ({action,existingTest}) => {
                 />
               </td>
               <td>
-                <button type='button' className='red-btn' onClick={() => handleDelete(key)} disabled={cases.length <= 1}>
+                <button type='button' className='red-btn' onClick={() => handleDeleteTest(key)} disabled={cases.length <= 1}>
                   ×
                 </button>
               </td>
@@ -94,7 +111,9 @@ const TestForm = ({action,existingTest}) => {
               <button type='button' className='blue-btn' onClick={handleAddTest} disabled={cases.length >= 10}>
                 Add Test
               </button>
-              <button type='submit' className='purple-btn'>Submit</button>
+              <button type='submit' className='purple-btn' disabled={pending}>
+                {pending ? 'Submitting...' : 'Submit'}
+              </button>
               <button type='button' className='red-btn' onClick={() => {
                 if(confirm("Are you sure you want to cancel? All unsaved changes will be lost.")) router.back()
               }}>

@@ -2,8 +2,7 @@ import User from "@models/user";
 import Post from "@models/post";
 import { connectedToDB } from "@utils/database"
 import Link from "next/link";
-import { Grade } from "@app/tests/[id]/page";
-
+import Grade from "@components/Grade";
 
 const UserPage = async({params}) => {
   await connectedToDB();
@@ -15,6 +14,7 @@ const UserPage = async({params}) => {
   // fetch posts associated with this user
   const db_data2 = await Post.find({ user: user._id }).populate('test', 'title');
   const posts = JSON.parse(JSON.stringify(db_data2));
+  posts.sort((a, b) => new Date(b.date) - new Date(a.date));
   posts.forEach(post => {
     post.date = new Date(post.date).toLocaleString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
   });

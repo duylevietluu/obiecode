@@ -50,9 +50,14 @@ const SignButton = ({user, status}) => {
       Sign Out
     </button>
     :
-    <button className='text-2xl text-green-500 hover:text-green-600 font-bold' onClick={signIn}>
-      Sign In
-    </button>
+    <div>
+      <Link href='/register' className="text-2xl text-blue-500 hover:text-blue-800 font-bold pr-4">
+        Register
+      </Link>
+      <button className='text-2xl text-green-500 hover:text-green-600 font-bold' onClick={signIn}>
+        Sign In
+      </button>
+    </div>
   )
 }
 

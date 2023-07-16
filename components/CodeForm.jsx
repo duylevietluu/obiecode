@@ -20,7 +20,7 @@ const CodeForm = ({testId, userId}) => {
       extensions={[python({ base: python, codeLanguages: pythonLanguage })]}
       className="pb-2 text-lg"
       editable={false}
-      onClick={() => {toast.error("Please login to submit.", {autoClose: 2000})}}
+      onClick={() => {toast.error("Please login to submit.", {autoClose: 2000, toastId: "request login"})}}
     />
   )
 

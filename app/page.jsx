@@ -8,54 +8,34 @@ const HomePage = () => {
   };
 
   return (
-    <div className="max-w-5xl mx-auto">
+    <div className="mx-auto">
       <h1 className="head_text">About Obie Code</h1>
       <div className="flex flex-col md:flex-row">
-        <div className="md:w-1/2 p-4" style={style}>
+        <div className="md:w-1/2 px-2" style={style}>
           <h3 className="small_header">Learn by practicing</h3>
           <div className="text-lg">
-            Start your coding journey by solving simple Python problems! Our platform offers 10+ challenges to help you learn and grow. Don't be afraid to try and fail, that's how you learn. Have fun and happy hacking!
+            Start your Python journey with ObieCode! We believe in the power of hands-on practice to enhance your learning experience. Embrace the opportunity to sharpen your Python skills through practical problem-solving!
           </div>
         </div>
-        <div className="md:w-1/2 p-4" style={style}>
+        <div className="md:w-1/2 px-2" style={style}>
           <h3 className="small_header">Problem format</h3>
           <div className="text-lg">
-            Each problem is written by the Admin team. You can try solving by clicking on{" "}
-            <Link href="/tests" className="link_color">
-              Problems
-            </Link>
-            . Each problem has a number of test cases, and you get grades based on the percentage of the test cases passed.
+            At ObieCode, our dedicated Admin team crafts every problem with precision. Dive into our vast collection and challenge yourself. Solve problems with custom test cases and earn grades based on your success rate. Embark on coding adventures with just a click!
           </div>
         </div>
       </div>
 
       <div className="flex flex-col md:flex-row">
-        <div className="md:w-1/2 p-4" style={style}>
+        <div className="md:w-1/2 px-2" style={style}>
           <h3 className="small_header">Developed by Duy</h3>
           <div className="text-lg">
-            This is the result of{" "}
-            <a className="link_color" href="https://github.com/OberlinCollaborativeCodingWinterTerm/winter-term-project-webcodelearning" target="#">
-              Duy Le's Winter Term project
-            </a>
-            . I have developed this website full-stack by JavaScript and NextJS, and deployed this website to the Internet using{" "}
-            <a className="link_color" href="https://fly.io/" target="#">
-              Vercel
-            </a>
-            .
+            ObieCode is the brainchild of a talented and passionate developer, Duy Le. With expertise in JavaScript and utilizing the powerful NextJS framework, Duy has single-handedly developed this full-stack website. To ensure seamless grading, Duy has also built a robust Python API that serves as the backbone of our grading system. Duy's dedication and skill have brought ObieCode to life, delivering an impressive user experience.
           </div>
         </div>
-        <div className="md:w-1/2 p-4" style={style}>
-          <h3 className="small_header">Special thanks</h3>
+        <div className="md:w-1/2 px-2" style={style}>
+          <h3 className="small_header">Techstack</h3>
           <div className="text-lg">
-            Thank you to the course{" "}
-            <a className="link_color" href="https://fullstackopen.com/en" target="#">
-              Full Stack Open
-            </a>{" "}
-            for teaching me the basics of full-stack developing, which grants me knowledge to build this whole website. And thank you to{" "}
-            <a className="link_color" href="https://github.com/Jaagrav/CodeX-API" target="#">
-              Jaagrav's CodeX API
-            </a>
-            , which I used for executing Python code in the server.
+            ObieCode's main website leverages NextJS and MongoDB (with Mongoose) for efficient server-side rendering. The website is deployed on Vercel for seamless performance. The Python API, powered by NodeJS, is deployed on Fly.io to ensure reliability and scalability.
           </div>
         </div>
       </div>

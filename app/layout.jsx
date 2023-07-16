@@ -3,6 +3,7 @@ import './globals.css'
 import { Inter } from 'next/font/google'
 import NavBar from '@components/NavBar'
 import AuthProvider from '@components/AuthProvider'
+import { ToastContainer } from 'react-toastify'
 
 const inter = Inter({ subsets: ['latin'] })
 

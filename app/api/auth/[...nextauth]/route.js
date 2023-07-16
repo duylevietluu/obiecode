@@ -36,13 +36,16 @@ const handler = NextAuth({
           }
         }
         else {
-          return Promise.reject(new Error('Invalid username or password'));
+          throw new Error('Invalid username or password');
         }
       }
     })
   ],
   session: {
     strategy: "jwt",
+  },
+  pages: {
+    signIn: "/auth/login",
   }
 });
 

@@ -1,15 +1,10 @@
 import TestForm from '@components/TestForm';
-import { extractUserInfo } from '@utils/utilFunc';
-import { getServerSession } from 'next-auth';
-
+import { getUserSession } from '@utils/utilFunc';
+import { redirect } from 'next/navigation';
 const CreateTest = async() => {
-  const user = extractUserInfo(await getServerSession());
+  const user = await getUserSession();
   if (!user?.admin) {
-    return (
-      <div className="text-center text-2xl">
-        <span className="red-btn">You are not authorized to create a test!</span>
-      </div>
-    )
+    redirect('/tests');
   }
   return <TestForm />
 }

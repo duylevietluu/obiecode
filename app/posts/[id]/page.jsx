@@ -4,8 +4,8 @@ import Post from "@models/post";
 import { connectedToDB } from "@utils/database"
 import Link from "next/link";
 import CodeView from "@components/CodeView";
-import { getServerSession } from "next-auth";
-import { extractUserInfo } from "@utils/utilFunc";
+import { getUserSession } from "@utils/utilFunc";
+
 import Grade from "@components/Grade";
 
 const PostViewPage = async({params}) => {
@@ -13,7 +13,7 @@ const PostViewPage = async({params}) => {
   // and populate to get user's username and test's title
   const db_data = await Post.findById(params.id).populate('user', 'username').populate('test', 'title');
   const post = JSON.parse(JSON.stringify(db_data));
-  const user = extractUserInfo(await getServerSession());
+  const user = await getUserSession();
   const isAuthorized = (post.user._id === user?._id || user?.admin)
 
   // set post datetime

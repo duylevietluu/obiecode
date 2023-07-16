@@ -1,11 +1,11 @@
 import Test from "@models/test";
 import { connectedToDB } from "@utils/database";
-import { extractUserInfo } from "@utils/utilFunc";
-import { getServerSession } from "next-auth";
+import { getUserSession } from "@utils/utilFunc";
+
 import Link from "next/link";
 
 const AllTests = async() => {
-  const user = extractUserInfo(await getServerSession());
+  const user = await getUserSession();
   await connectedToDB();
   // only fetch the _id and title fields
   const db_data = await Test.find({}, { _id: 1, title: 1 });

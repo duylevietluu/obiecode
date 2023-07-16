@@ -4,14 +4,23 @@ import Link from "next/link";
 import { Montserrat } from 'next/font/google';
 import { useSession, signIn, signOut } from "next-auth/react";
 import { extractUserInfo } from "@utils/utilFunc";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'
+import { useEffect } from "react";
+import { usePathname } from "next/navigation";
+import useUser from "@hooks/useUser";
 
 const navfont = Montserrat({ subsets: ['latin'], weight: '400' });
 
 const NavBar = () => {
-  const { data, status } = useSession();
-  const user = extractUserInfo(data);
+  const pathname = usePathname();
+  const { user, status } = useUser();
+
   return (
+    <>
+    <ToastContainer autoClose={1000} />
     <nav className={'flex justify-between items-center w-[92%] p-4 mx-auto ' + navfont.className}>
+      
       {/* logo on the left */}
       <Link href="/">
         <img 
@@ -30,34 +39,33 @@ const NavBar = () => {
       </div>
 
       {/* button to sign in and out, this SHOULD be client side components*/}
-      <SignButton user={user} status={status} />
+      <SignButton user={user} status={status} pathname={pathname} />
     </nav>
+    </>
+    
   )
 }
 
-const SignButton = ({user, status}) => {
-  if (status === "loading") {
+const SignButton = ({user, status, pathname}) => {
+  if (status === "loading" || !pathname) {
     return (
       <button className='text-2xl text-blue-700 font-bold' disabled>
         Loading...
       </button>
     )
   }
-  return (
-    user ?
-    <button className="text-2xl text-red-500 hover:text-red-700 font-bold" 
+  if (user) {
+    return (
+      <button className="text-2xl text-red-500 hover:text-red-700 font-bold" 
       onClick={() => {if (confirm("Do you want to sign out?")) signOut()}}>
-      Sign Out
-    </button>
-    :
-    <div>
-      <Link href='/register' className="text-2xl text-blue-500 hover:text-blue-800 font-bold pr-4">
-        Register
-      </Link>
-      <button className='text-2xl text-green-500 hover:text-green-600 font-bold' onClick={signIn}>
-        Sign In
+        Sign Out
       </button>
-    </div>
+    )
+  }
+  return(
+    <Link href={`/auth/login/?callbackUrl=${pathname}`} className='text-2xl text-green-500 hover:text-green-600 font-bold'>
+      Sign In
+    </Link>
   )
 }
 

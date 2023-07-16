@@ -5,6 +5,7 @@ import { python, pythonLanguage } from '@codemirror/lang-python';
 import { useState, useTransition } from "react";
 import { addPostAction } from "@app/action";
 import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 const CodeForm = ({testId, userId}) => {
   const [code, setCode] = useState('');
@@ -19,18 +20,20 @@ const CodeForm = ({testId, userId}) => {
       extensions={[python({ base: python, codeLanguages: pythonLanguage })]}
       className="pb-2 text-lg"
       editable={false}
-      onClick={() => {alert("Please login to submit.")}}
+      onClick={() => {toast.error("Please login to submit.", {autoClose: 2000})}}
     />
   )
 
   const handleAction = () => {
     startTransition(async() => {
+      const id = toast.loading("Submitting your code...", {autoClose: false});
       const {data, error} = await addPostAction(testId, userId, code);
       if (error) {
-        alert(error);
+        toast.update(id, { render: error, type: toast.TYPE.ERROR, isLoading: false, autoClose: 5000 });
       }
       if (data) {
         router.push(`/posts/${data}`);
+        toast.update(id, { render: "Submitted your code!", type: toast.TYPE.SUCCESS, isLoading: false, autoClose: 2000 });
       }
     })
   }

@@ -1,9 +1,7 @@
-import { extractUserInfo } from "@utils/utilFunc";
-import { getServerSession } from "next-auth";
+import { getUserSession } from "@utils/utilFunc";
 
 export const GET = async() => {
-  const data = await getServerSession();
-  const user = extractUserInfo(data);
+  const user = await getUserSession();
   if (user) 
     return new Response(JSON.stringify(user), {status: 200});
   else 

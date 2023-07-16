@@ -5,8 +5,8 @@ import Post from "@models/post";
 import Test from "@models/test";
 import { connectedToDB } from "@utils/database";
 import { grader } from "@utils/grader";
-import { extractUserInfo } from "@utils/utilFunc";
-import { getServerSession } from "next-auth";
+import { getUserSession } from "@utils/utilFunc";
+
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import bcrypt from 'bcrypt';
@@ -17,7 +17,7 @@ export const createOrEditTest = async(testId, title, content, testCases) => {
   // if testId is not null then edit test
   // else create test
   try {
-    const user = extractUserInfo(await getServerSession());
+    const user = await getUserSession();
     // if not authorized then return
     if (!user || !user.admin) {
       return({ error: "403 Unauthorized!" });
@@ -26,15 +26,21 @@ export const createOrEditTest = async(testId, title, content, testCases) => {
     if (!title || !content || !testCases || testCases.length === 0) {
       return({ error: "title, content, testCases are required!" });
     }
+    // validate ouput
+    for (let i = 0; i < testCases.length; i++) {
+      if (!testCases[i].output) {
+        return({ error: `output of test case ${i + 1} is empty!` });
+      }
+    }
     await connectedToDB();
-    const data = { title, content, testCases };
+    const newData = { title, content, testCases };
     if (testId) {
-      await Test.findByIdAndUpdate(testId, data, {new: true});
+      await Test.findByIdAndUpdate(testId, newData, {new: true});
 
     } else {
-      const newTest = new Test(data);
+      const newTest = new Test(newData);
       await newTest.save();
-      testId = newTest._id;
+      testId = String(newTest._id);
     }
     revalidatePath('/tests');
     revalidatePath(`/tests/${testId}`);
@@ -45,12 +51,11 @@ export const createOrEditTest = async(testId, title, content, testCases) => {
 }
 
 export const deleteTestAction = async(testId) => {
-  let isError = false;
   try {
-    const user = extractUserInfo(await getServerSession());
+    const user = await getUserSession();
     // if not authorized then return
     if (!user || !user.admin) {
-      throw new Error('unauthorized delete test');
+      return({ error: "403 Unauthorized test deletion!" });
     }
     await connectedToDB();
     await Test.findByIdAndDelete(testId);
@@ -58,12 +63,9 @@ export const deleteTestAction = async(testId) => {
     await Post.deleteMany({test: testId});
     await BestGrade.deleteMany({test: testId});
     revalidatePath('/tests');
+    return { error: null };
   } catch (error) {
-    isError = true;
-    console.log(error);
-  }
-  if (!isError) {
-    redirect('/tests');
+    return {error: error.message};
   }
 }
 
@@ -72,6 +74,12 @@ export const deleteTestAction = async(testId) => {
 
 export const addPostAction = async(testId, userId, code) => {
   try {
+    const user = await getUserSession();
+    // if user id does not match
+    if (!user || user._id !== userId) {
+      return {error: `400 Bad request, session id ${user?._id} is not submitted userId ${userId}`};
+    }
+
     await connectedToDB();
 
     // validation

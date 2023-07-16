@@ -2,15 +2,15 @@ import CodeForm from "@components/CodeForm";
 import BestGrade from "@models/bestgrade";
 import Test from "@models/test";
 import { connectedToDB } from "@utils/database"
-import { extractUserInfo } from "@utils/utilFunc";
-import { getServerSession } from "next-auth";
+import { getUserSession } from "@utils/utilFunc";
+
 import DeleteTestButton from "../DeleteTestButton";
 import Link from "next/link";
 import Grade from "@components/Grade";
 
 const TestPage = async({params}) => {
   await connectedToDB();
-  const user = extractUserInfo(await getServerSession());
+  const user = await getUserSession();
   const user_id = user?._id;
   // only show title, content, id
   const db_data = await Test.findById(params.id, { title: 1, content: 1, _id: 1 });

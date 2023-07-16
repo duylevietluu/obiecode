@@ -3,12 +3,15 @@ import Post from "@models/post";
 import { connectedToDB } from "@utils/database"
 import Link from "next/link";
 import Grade from "@components/Grade";
+import DeleteButton from "@components/DeleteButton";
+import { getUserSession } from "@utils/utilFunc";
 
 const UserPage = async({params}) => {
   await connectedToDB();
   // only show username, name, admin, and _id
   const db_data = await User.findById(params.id, { username: 1, name: 1, admin: 1, _id: 1 });
   const user = JSON.parse(JSON.stringify(db_data));
+  const loggedUser = await getUserSession();
   user.role = user.admin ? "Admin" : "User";
   user.color = user.admin ? "text-red-500" : "text-green-500";
   // fetch posts associated with this user
@@ -44,6 +47,7 @@ const UserPage = async({params}) => {
               <span className="font-bold">Submission posted: </span>
               <span>{posts.length}</span>
             </div>
+            {(loggedUser?.admin || loggedUser?._id === user?._id) && <DeleteButton id={user._id} type="user" />}            
           </div>
           
         </div>

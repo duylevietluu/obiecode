@@ -3,6 +3,8 @@ import Post from "@models/post";
 import { connectedToDB } from "@utils/database";
 import Link from "next/link";
 
+export const revalidate = 120;
+
 const AllPosts = async({searchParams}) => {
   await connectedToDB();
   const search = {}

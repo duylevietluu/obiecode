@@ -4,7 +4,7 @@ import Test from "@models/test";
 import { connectedToDB } from "@utils/database"
 import { getUserSession } from "@utils/utilFunc";
 
-import DeleteTestButton from "../DeleteTestButton";
+import DeleteButton from "@components/DeleteButton";
 import Link from "next/link";
 import Grade from "@components/Grade";
 
@@ -39,7 +39,7 @@ const TestPage = async({params}) => {
             user?.admin &&
             <div className="text-center my-2">
               <Link href={`/tests/${params.id}/edit`} className="edit-link">Edit</Link>
-              <DeleteTestButton testId={params.id} />
+              <DeleteButton type='test' id={params.id} />
             </div>
           }
           <div className="text-xl text-black py-4 whitespace-pre-wrap">{test.content}</div>

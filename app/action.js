@@ -63,7 +63,7 @@ export const deleteTestAction = async(testId) => {
     await Post.deleteMany({test: testId});
     await BestGrade.deleteMany({test: testId});
     revalidatePath('/tests');
-    return { error: null };
+    return { toSignOut: false };
   } catch (error) {
     return {error: error.message};
   }
@@ -116,7 +116,6 @@ export const addPostAction = async(testId, userId, code) => {
       await BestGrade.findByIdAndUpdate(bestGrade._id, {result: newPost.grade});
       revalidatePath(`/tests/${testId}`);
     }
-
     return {data: String(newPost._id)};
   } catch (error) {
     return {error: error.message};
@@ -139,11 +138,43 @@ export const registerAction = async(username, name, password) => {
       admin: false,
     });
     await user.save();
+    revalidatePath('/users');
     return {data: String(user._id)};
   } catch (error) {
     if (error?.message && error.message.includes('duplicate key error')) {
       return {error: "Username already taken"};
     }
     return {error: error.message};
+  }
+}
+
+// delete a user
+export const deleteUserAction = async(userId) => {
+  try {
+    const user = await getUserSession();
+    // if not authorized then return
+    if (!user?.admin && user?._id !== userId) {
+      return({ error: "403 Unauthorized user deletion!" });
+    }
+    await connectedToDB();
+    await User.findByIdAndDelete(userId);
+    // have to delete all post and bestgrade of this user
+    await Post.deleteMany({user: userId});
+    await BestGrade.deleteMany({user: userId});
+
+    revalidatePath('/users');
+    return { toSignOut: user?._id === userId };
+  } catch (error) {
+    return {error: error.message};
+  }
+}
+
+export const deleteAction = async(id, type) => {
+  if (type === 'test') {
+    return await deleteTestAction(id);
+  } else if (type === 'user') {
+    return await deleteUserAction(id);
+  } else {
+    return {error: `400 Bad request, type ${type} is not supported`};
   }
 }

@@ -50,9 +50,10 @@ const TestPage = async({params}) => {
           <div className="font-bold text-xl">
             <Grade grade={bestgrade?.result} loggedUser={user} />
           </div>
+          <hr className="my-4 border-black w-full md:hidden" />
           
         </div>
-        <div className="md:w-7/12 px-10">
+        <div className="md:w-7/12 md:px-10">
             <CodeForm testId={params.id} userId={user_id} />
         </div>
       </div>

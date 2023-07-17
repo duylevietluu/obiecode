@@ -15,21 +15,48 @@ const AllTests = async() => {
       <h3 className="head_text">Coding Challenges!</h3>
       {
         user?.admin &&
-        <div className="text-center">
+        <div className="text-center mb-4">
           <Link href='/tests/create' className="blue-btn text-xl">Create Test</Link>
         </div>
       }
-      {
-        tests.map(test => 
-          <div key={test._id}>
-            <Link href={`/tests/${test._id}`} className="test_link">
-              {test.title}
-            </Link>
-          </div>
-        )
-      }
+      <table className="w-full rounded-lg overflow-hidden border border-gray-900 alt_table">
+        <thead>
+          <tr>
+            <th className="w-2/5 text_th">Test</th>
+            <th className="w-1/5 text_th">Category</th>
+            <th className="w-1/5 text_th">Difficulty</th>
+          </tr>
+        </thead>
+        <tbody>
+          {tests.map((test) => (
+            <tr key={test._id}>
+              <td className="border px-4 py-2 text-center">
+                <Link href={`/tests/${test._id}`} className="test_link">
+                  {test.title}
+                </Link>
+              </td>
+              <td className="border text-cyan-700 px-4 py-2 font-bold text-center text-lg">
+                {test.category ?? "Beginner"}
+              </td>
+              <td className="border px-4 py-2 font-bold text-center text-lg">
+                <Difficulty difficulty={test.difficulty ?? "easy"} />
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </>
   )
 }
+
+const Difficulty = ({ difficulty }) => {
+  if (difficulty === "easy") {
+    return <span className="text-green-600">Easy</span>;
+  } else if (difficulty === "medium") {
+    return <span className="text-yellow-500">Medium</span>;
+  } else {
+    return <span className="text-red-500">Hard</span>;
+  }
+};
 
 export default AllTests

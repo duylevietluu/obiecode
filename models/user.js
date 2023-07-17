@@ -20,18 +20,6 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     required: true,
   },
-  // posts: [
-  //   {
-  //     type: mongoose.Schema.Types.ObjectId,
-  //     ref: 'Post'
-  //   }
-  // ],
-  // // test id to grade
-  // grades: {
-  //   type: Map,
-  //   // of: Number,
-  //   required: true,
-  // },
 })
 
 const User = models.User || model('User', userSchema);

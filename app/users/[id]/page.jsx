@@ -24,9 +24,9 @@ const UserPage = async({params}) => {
 
   return (
     <>
-      <div className="flex flex-col md:flex-row">
+      <div className="flex flex-col xl:flex-row">
         {/* COL 1: USER INFO */}
-        <div className="md:w-5/12">
+        <div className="xl:w-5/12">
           <div className="profile_card">
             <h3 className={`text-3xl font-bold mb-4 ${user.color}`}>Coder {user.username}</h3>
             <img
@@ -53,10 +53,10 @@ const UserPage = async({params}) => {
         </div>
 
         {/* COL 2: table of posts */}
-        <div className="md:w-7/12">
+        <div className="xl:w-7/12">
           {
             posts.length === 0 ?
-            <h3 className="text-2xl font-semibold mb-4">
+            <h3 className="text-2xl font-semibold mb-4 text-center hidden xl:block">
               No submissions yet!
             </h3>
             :

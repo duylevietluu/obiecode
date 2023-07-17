@@ -34,7 +34,6 @@ const PostViewPage = async({params}) => {
             {
                 post.results ? 
                 post.results.map((item, i) => <TestCaseCard key={item._id} result={item} order={i} isAuthorized={isAuthorized} /> )
-                //<div key={i}>Test {i+1} {item.success? "passed" : "failed"}</div>) 
                 :
                 null
             }
@@ -54,7 +53,7 @@ const PostViewPage = async({params}) => {
 const TestCaseCard = ({result, order, isAuthorized}) => {
   return (
     <div className={`${result.success? "bg-[#acffd740] text-green-700" : "bg-[#ffe1d043] text-red-500"} 
-        shadow-md rounded-lg p-4 border border-gray-400 my-1 mr-10`}>
+        shadow-md rounded-lg p-4 border border-gray-400 my-1 md:mr-10`}>
       <h3 className={`text-lg font-bold mb-2`}>
         Test {order + 1} {result.success? "passed" : "failed"}
       </h3>

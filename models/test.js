@@ -18,18 +18,6 @@ const testSchema = new Schema({
         ],
         required: true,
     },
-    // posts: [
-    //     {
-    //         type: mongoose.Schema.Types.ObjectId,
-    //         ref: 'Post',
-    //     }
-    // ],
-    // // user id to grade
-    // grades: {
-    //     type: Map,
-    //     // of: Number,
-    //     required: true,
-    // },
 })
 
 const Test = models.Test || model('Test', testSchema);

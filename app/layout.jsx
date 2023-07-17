@@ -1,9 +1,7 @@
-import Link from 'next/link'
 import './globals.css'
 import { Inter } from 'next/font/google'
 import NavBar from '@components/NavBar'
 import AuthProvider from '@components/AuthProvider'
-import { ToastContainer } from 'react-toastify'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -20,7 +18,7 @@ export default function RootLayout({ children }) {
           <header className='bg-[#ececf1] text-gray-800'>
             <NavBar />
           </header>
-          <main className={"flex-col justify-between px-24 py-10  text-gray-800 bg-transparent"}>
+          <main className={"flex-col justify-between px-4 lg:px-8 xl:px-12 2xl:px-24 py-10  text-gray-800 bg-transparent"}>
             {children}
           </main>
         </body>

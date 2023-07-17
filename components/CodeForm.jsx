@@ -49,11 +49,7 @@ const CodeForm = ({testId, userId}) => {
         className="pb-2 text-lg"
       />
       <div className="flex justify-center items-center">
-        <button 
-          type="submit" 
-          className="blue-btn"
-          disabled={pending || !code} 
-        >
+        <button type="submit" className="blue-btn" disabled={pending || !code} >
           {pending ? "Submitting..." : "Submit"}
         </button>
       </div>

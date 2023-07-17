@@ -21,10 +21,10 @@ const DeleteButton = ({ id, type }) => {
       }
       else {
         toast.update(toastId, { render: `Deleted the ${type}!`, type: toast.TYPE.SUCCESS, isLoading: false, autoClose: 2000 });
-        if (type === 'test') {
+        if (!toSignOut) {
           router.push(`/${type}s`);
         }
-        else if (toSignOut) {
+        else {
           await signOut({callbackUrl: '/'});
         }
       }
